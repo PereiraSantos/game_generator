@@ -21,9 +21,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamegenerator.entities.Game
-import com.example.gamegenerator.entities.GameList
 import com.example.gamegenerator.ui.theme.GameGeneratorTheme
 import com.example.gamegenerator.utils.Cache
+import com.example.gamegenerator.utils.Generate
 
 class MainActivity : ComponentActivity() {
 
@@ -56,6 +56,7 @@ fun view(){
         bottomBar = {
             buttonSave(onClick = {
                 println(Cache.getInstance().getGameInstance().getList())
+                println(Generate().generateNumber())
             })
         },
 
