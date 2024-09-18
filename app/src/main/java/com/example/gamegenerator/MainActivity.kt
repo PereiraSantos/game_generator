@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,6 +43,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun view(){
+    var generatedNumberValue: MutableState<String>  = remember { mutableStateOf("") }
+    var generatedValue: MutableState<String>  = remember { mutableStateOf("") }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -55,8 +59,8 @@ fun view(){
         },
         bottomBar = {
             buttonSave(onClick = {
-                println(Cache.getInstance().getGameInstance().getList())
-                println(Generate().generateNumber())
+                generatedValue.value = Cache.getInstance().getGameInstance().getSelect()
+                generatedNumberValue.value = Generate().generateNumber().joinToString()
             })
         },
 
@@ -65,6 +69,7 @@ fun view(){
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            generatedNumber(generatedNumberValue, generatedValue)
 
             val instance = Cache.getInstance()
             instance.getGameInstance().generate()
@@ -75,14 +80,36 @@ fun view(){
 }
 
 @Composable
+fun generatedNumber(generatedNumberValue: MutableState<String> ,generatedValue: MutableState<String> ){
+        Column (
+            modifier = Modifier.fillMaxWidth().padding(all =5.dp)
+        ){
+            Text(
+                modifier = Modifier.padding(all = 5.dp),
+                text = "Numeros gerado: ${generatedValue.value}",
+                color = Color.Black,
+                fontSize = 18.sp,
+            )
+
+            Text(
+                modifier = Modifier.padding(all = 5.dp),
+                text = generatedNumberValue.value,
+                color = Color.Gray,
+                fontSize = 18.sp,
+            )
+        }
+}
+
+
+@Composable
 fun list(item: List<Game>) {
     LazyColumn{
         items(items = item){item->
             Card(modifier = Modifier
                 .fillMaxWidth()
                 .padding(all = 5.dp),
-                elevation = 6.dp,
-                shape = RoundedCornerShape(size = 8.dp)
+                elevation = 1.dp,
+                shape = RoundedCornerShape(size = 6.dp)
             ) {
                 itemLazy(item = item)
             }

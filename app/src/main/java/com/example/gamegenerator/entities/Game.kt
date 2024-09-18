@@ -17,7 +17,7 @@ class GameList {
 
     fun generate(){
         games.add(Game(md5(Date().time.toString()),"Mega-Sena",false))
-        games.add(Game(md5(Date().time.toString()),"Lotofacil",false))
+        games.add(Game(md5(Date().time.toString()),"Lotofácil",false))
         games.add(Game(md5(Date().time.toString()),"Quina",false))
         games.add(Game(md5(Date().time.toString()),"Lotomania",false))
         games.add(Game(md5(Date().time.toString()),"Dupla Sena",false))
@@ -38,9 +38,18 @@ class GameList {
         return games
     }
 
+    fun getSelect(): String {
+        var select = games.filter { it.select }
+        return select[0].name
+    }
+
     fun updateList(game: Game){
         for (index in games.indices ){
-            if (games[index].hash == game.hash) games[index].select = !games[index].select
+            if (games[index].hash == game.hash) {
+                games[index].select = !games[index].select
+            } else {
+                games[index].select = false
+            }
         }
     }
 }
