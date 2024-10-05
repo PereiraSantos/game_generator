@@ -9,10 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +22,7 @@ import com.example.gamegenerator.entities.Game
 import com.example.gamegenerator.ui.theme.GameGeneratorTheme
 import com.example.gamegenerator.utils.Cache
 import com.example.gamegenerator.utils.Generate
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -46,6 +44,9 @@ fun view(){
     var generatedNumberValue: MutableState<String>  = remember { mutableStateOf("") }
     var generatedValue: MutableState<String>  = remember { mutableStateOf("") }
 
+    val scope = rememberCoroutineScope()
+    val snack = remember { SnackbarHostState() }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -59,8 +60,17 @@ fun view(){
         },
         bottomBar = {
             buttonSave(onClick = {
-                generatedValue.value = Cache.getInstance().getGameInstance().getSelect()
-                generatedNumberValue.value = Generate().generateNumber().joinToString()
+                try {
+                    var game: Game = Cache.getInstance().getGameInstance().getSelect()
+                    generatedValue.value = game.name
+                    generatedNumberValue.value =
+                        Generate().generateNumber(game.max, game.maxNumber).joinToString()
+                } catch (e: Exception){
+
+                    scope.launch {
+                        snack.showSnackbar("Selecione um jogo", "Alerta", SnackbarDuration.Long)
+                    }
+                }
             })
         },
 
@@ -87,7 +97,7 @@ fun generatedNumber(generatedNumberValue: MutableState<String> ,generatedValue: 
             Text(
                 modifier = Modifier.padding(all = 5.dp),
                 text = "Numeros gerado: ${generatedValue.value}",
-                color = Color.Black,
+                color = Color.Gray,
                 fontSize = 18.sp,
             )
 
@@ -95,7 +105,7 @@ fun generatedNumber(generatedNumberValue: MutableState<String> ,generatedValue: 
                 modifier = Modifier.padding(all = 5.dp),
                 text = generatedNumberValue.value,
                 color = Color.Gray,
-                fontSize = 18.sp,
+                fontSize = 20.sp,
             )
         }
 }
